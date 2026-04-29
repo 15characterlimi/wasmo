@@ -1,5 +1,6 @@
 package com.wasmo.objectstore.filesystem
 
+import java.io.File
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.nio.file.FileSystemException
@@ -104,7 +105,10 @@ class FileSystemObjectStore(
   }
 
   private fun Path.toKey(): String {
-    return relativeTo(path).toString()
+    return relativeTo(path).toString().let {
+      // normalize key to use '/' as separator
+      if (File.separatorChar != '/') it.replace(File.separatorChar, '/') else it
+    }
   }
 
   private val Path.userAttributes: UserDefinedFileAttributeView?
